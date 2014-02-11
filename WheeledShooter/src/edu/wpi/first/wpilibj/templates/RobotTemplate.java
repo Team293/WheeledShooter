@@ -6,13 +6,12 @@
 /*----------------------------------------------------------------------------*/
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SpikeEncoder;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.buttons.SpikeButton;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -46,6 +45,10 @@ public class RobotTemplate extends IterativeRobot {
             rightJoystick = new Joystick(2),
             gamepad = new Joystick(3);
 
+    SpikeEncoder enc1 = new SpikeEncoder(Ports.shooter1EncA, Ports.shooter1EncB),
+            enc2 = new SpikeEncoder(Ports.shooter2EncA, Ports.shooter2EncB),
+            enc3 = new SpikeEncoder(Ports.shooter3EncA, Ports.shooter3EncB);
+
     SpikeButton pass = new SpikeButton(gamepad, Ports.pass),
             toggleFeeder = new SpikeButton(gamepad, Ports.toggleFeeder),
             fire = new SpikeButton(rightJoystick, Ports.fire),
@@ -54,21 +57,17 @@ public class RobotTemplate extends IterativeRobot {
     DigitalInput ballLimit = new DigitalInput(Ports.ballLimit);
     boolean shooting = false;
 
-    Encoder enc1 = new Encoder(Ports.shooter1EncA, Ports.shooter1EncB, true, CounterBase.EncodingType.k4X);
-    Encoder enc2 = new Encoder(Ports.shooter2EncA, Ports.shooter2EncB, true, CounterBase.EncodingType.k4X);
-    Encoder enc3 = new Encoder(Ports.shooter3EncA, Ports.shooter3EncB, true, CounterBase.EncodingType.k4X);
-
     public void robotInit() {
-        //Test.addComponents();
+        addComponents();
         SmartDashboard.putNumber("1", 0.0);
         SmartDashboard.putNumber("2", 0.0);
         SmartDashboard.putNumber("3", 0.0);
         enc1.start();
         enc2.start();
         enc3.start();
-        enc1.setDistancePerPulse(0.0128);
-        enc2.setDistancePerPulse(0.0128);
-        enc3.setDistancePerPulse(0.0128);
+        enc1.reset();
+        enc2.reset();
+        enc3.reset();
     }
 
     /**
@@ -85,11 +84,14 @@ public class RobotTemplate extends IterativeRobot {
         double speed1 = SmartDashboard.getNumber("1", 0.0);
         double speed2 = SmartDashboard.getNumber("2", 0.0);
         double speed3 = SmartDashboard.getNumber("3", 0.0);
+        SmartDashboard.putNumber("enc1 RPM", enc1.getRPM());
+        SmartDashboard.putNumber("enc2 RPM", enc2.getRPM());
+        SmartDashboard.putNumber("enc3 RPM", enc3.getRPM());
 
         if (toggleDriveDirection.getState()) {
             drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
         } else {
-            drive.tankDrive(-leftJoystick.getY(), -rightJoystick.getY());
+            drive.tankDrive(-rightJoystick.getY(), -leftJoystick.getY());
         }
 
         SmartDashboard.putBoolean("feeder state", toggleFeeder.getState());
@@ -137,5 +139,20 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void testPeriodic() {
         LiveWindow.run();
+    }
+
+    public void addComponents() {
+        LiveWindow.addActuator("shooter rack", "shooter 1", shooter1);
+        LiveWindow.addActuator("shooter rack", "shooter 2", shooter2);
+        LiveWindow.addActuator("shooter rack", "shooter 3", shooter3);
+        LiveWindow.addSensor("shooter rack", "shooter enc 1", enc1);
+        LiveWindow.addSensor("shooter rack", "shooter enc 2", enc2);
+        LiveWindow.addSensor("shooter rack", "shooter enc 3", enc3);
+        LiveWindow.addActuator("drive train", "left drive", leftMotor);
+        LiveWindow.addActuator("drivev train", "right drive", rightMotor);
+        LiveWindow.addActuator("trigger", "trigger", trigger);
+        LiveWindow.addSensor("trigger", "ball limit", ballLimit);
+        LiveWindow.addActuator("feeder", "feeder", feederMotor);
+
     }
 }

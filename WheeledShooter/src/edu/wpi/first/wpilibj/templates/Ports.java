@@ -44,12 +44,12 @@ public class Ports {
             catcherActuator1 = 9,
             catcherActuator2 = 9,
             //encoders
-            shooter1EncA = 3,
-            shooter1EncB = 4,
-            shooter2EncA = 5,
-            shooter2EncB = 6,
-            shooter3EncA = 7,
-            shooter3EncB = 8,
+            shooter1EncA = 2,
+            shooter1EncB = 3,
+            shooter2EncA = 4,
+            shooter2EncB = 5,
+            shooter3EncA = 6,
+            shooter3EncB = 7,
             //gyros
             gyro = 1,
             //Ultrasonics
