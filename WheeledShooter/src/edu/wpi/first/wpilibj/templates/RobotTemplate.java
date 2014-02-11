@@ -56,18 +56,19 @@ public class RobotTemplate extends IterativeRobot {
 
     DigitalInput ballLimit = new DigitalInput(Ports.ballLimit);
     boolean shooting = false;
+    double setpoint, tolerance, kP;
 
     public void robotInit() {
         addComponents();
+        SmartDashboard.putNumber("setpoint", 1400.0);
+        SmartDashboard.putNumber("kP", 0.0);
+        SmartDashboard.putNumber("tolerance", 50.0);
         SmartDashboard.putNumber("1", 0.0);
         SmartDashboard.putNumber("2", 0.0);
         SmartDashboard.putNumber("3", 0.0);
         enc1.start();
         enc2.start();
         enc3.start();
-        enc1.reset();
-        enc2.reset();
-        enc3.reset();
     }
 
     /**
@@ -81,12 +82,17 @@ public class RobotTemplate extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+        setpoint = SmartDashboard.getNumber("setpoint", 500.0);
+        double error = setpoint - enc2.getRPM();
+        tolerance = SmartDashboard.getNumber("tolerance", 50.0);
+        kP = SmartDashboard.getNumber("kP", 0.0);
         double speed1 = SmartDashboard.getNumber("1", 0.0);
         double speed2 = SmartDashboard.getNumber("2", 0.0);
         double speed3 = SmartDashboard.getNumber("3", 0.0);
         SmartDashboard.putNumber("enc1 RPM", enc1.getRPM());
         SmartDashboard.putNumber("enc2 RPM", enc2.getRPM());
         SmartDashboard.putNumber("enc3 RPM", enc3.getRPM());
+        SmartDashboard.putNumber("enc1 RPM", enc1.getRPM());
 
         if (toggleDriveDirection.getState()) {
             drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
@@ -101,8 +107,15 @@ public class RobotTemplate extends IterativeRobot {
 
         /* speed values range from 0 to 1 & 1=100% */
         shooter1.set(speed1);
-        shooter2.set(speed2);
         shooter3.set(speed3);
+        //shooter2.set(speed2);
+
+        if (enc2.getRPM() < setpoint - tolerance) {
+            double output = kP * error;
+            shooter2.set(output);
+        } else if (enc2.getRPM() > setpoint + tolerance) {
+            shooter2.set(0);
+        }
 
         if (fire.getClick()) {
             shooting = true;
@@ -148,11 +161,8 @@ public class RobotTemplate extends IterativeRobot {
         LiveWindow.addSensor("shooter rack", "shooter enc 1", enc1);
         LiveWindow.addSensor("shooter rack", "shooter enc 2", enc2);
         LiveWindow.addSensor("shooter rack", "shooter enc 3", enc3);
-        LiveWindow.addActuator("drive train", "left drive", leftMotor);
-        LiveWindow.addActuator("drivev train", "right drive", rightMotor);
         LiveWindow.addActuator("trigger", "trigger", trigger);
         LiveWindow.addSensor("trigger", "ball limit", ballLimit);
         LiveWindow.addActuator("feeder", "feeder", feederMotor);
-
     }
 }
