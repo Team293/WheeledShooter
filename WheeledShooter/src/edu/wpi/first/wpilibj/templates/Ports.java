@@ -15,13 +15,17 @@ public class Ports {
             rightJoystick = 2,
             gamepad = 3,
             //buttons
+            //___right joystick
+            fire = 1,
+            toggleDriveDirection = 3,
+            //___gamepad
             toggleFeeder = 1,
-            fire = 2,
+            pass = 2,
             catcher = 3,
             stopShooter = 4,
             setHighRPM = 5,
             setLowRPM = 6,
-            autoAngle = 7,
+            autoAlign = 7,
             //axes
             gamepadLeftXAxis = 1,
             gamepadLeftYAxis = 2,

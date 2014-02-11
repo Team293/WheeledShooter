@@ -46,9 +46,10 @@ public class RobotTemplate extends IterativeRobot {
             rightJoystick = new Joystick(2),
             gamepad = new Joystick(3);
 
-    SpikeButton pass = new SpikeButton(gamepad, 2),
-            toggleFeeder = new SpikeButton(gamepad, 1),
-            shootButton = new SpikeButton(rightJoystick, 1);
+    SpikeButton pass = new SpikeButton(gamepad, Ports.pass),
+            toggleFeeder = new SpikeButton(gamepad, Ports.toggleFeeder),
+            fire = new SpikeButton(rightJoystick, Ports.fire),
+            toggleDriveDirection = new SpikeButton(rightJoystick, Ports.toggleDriveDirection);
 
     DigitalInput ballLimit = new DigitalInput(Ports.ballLimit);
     boolean shooting = false;
@@ -85,7 +86,11 @@ public class RobotTemplate extends IterativeRobot {
         double speed2 = SmartDashboard.getNumber("2", 0.0);
         double speed3 = SmartDashboard.getNumber("3", 0.0);
 
-        drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
+        if (toggleDriveDirection.getState()) {
+            drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
+        } else {
+            drive.tankDrive(-leftJoystick.getY(), -rightJoystick.getY());
+        }
 
         SmartDashboard.putBoolean("feeder state", toggleFeeder.getState());
         SmartDashboard.putBoolean("ball limit", ballLimit.get());
@@ -97,7 +102,7 @@ public class RobotTemplate extends IterativeRobot {
         shooter2.set(speed2);
         shooter3.set(speed3);
 
-        if (shootButton.getClick()) {
+        if (fire.getClick()) {
             shooting = true;
         }
 
