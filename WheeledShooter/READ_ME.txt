@@ -1,0 +1,1 @@
+This project lets you drive the robot with two joystick, control shooter motors with the joystick z-axis (the little flippy thing on the joystick), and and control a leadscrew with two limit switches (kind of works).
