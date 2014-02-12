@@ -213,3 +213,15 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+##############
+## Netbeans
+##############
+
+private.xml
+project.xml
+project.bak.xml
+
+*/private.xml
+*/project.xml
+*/project.bak.xml
