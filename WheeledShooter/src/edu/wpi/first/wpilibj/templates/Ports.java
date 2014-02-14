@@ -21,11 +21,6 @@ public class Ports {
             //___gamepad
             toggleFeeder = 1,
             pass = 2,
-            catcher = 3,
-            stopShooter = 4,
-            setHighRPM = 5,
-            setLowRPM = 6,
-            autoAlign = 7,
             //axes
             gamepadLeftXAxis = 1,
             gamepadLeftYAxis = 2,
@@ -37,12 +32,10 @@ public class Ports {
             feeder = 1,
             trigger = 2,
             cageRelease = 3,
-            shooter1 = 3,
-            shooter2 = 4,
-            shooter3 = 5,
+            shooterLow = 3,
+            shooterMiddle = 4,
+            shooterHigh = 5,
             cameraServo = 10,
-            catcherActuator1 = 9,
-            catcherActuator2 = 9,
             //encoders
             shooter1EncA = 2,
             shooter1EncB = 3,
@@ -62,7 +55,5 @@ public class Ports {
             led3 = 12,
             led4 = 13,
             //optical limtis
-            ballLimit = 1,
-            ballSetting = 2;
-
+            ballLimit = 1;
 }
