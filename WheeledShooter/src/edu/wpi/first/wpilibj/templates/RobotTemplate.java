@@ -8,7 +8,9 @@ package edu.wpi.first.wpilibj.templates;
 
 import Team293Spike.SpikeButton;
 import Team293Spike.SpikeEncoder;
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -60,10 +62,11 @@ public class RobotTemplate extends IterativeRobot {
 
     Gyro gyro = new Gyro(Ports.gyro);
 
-//    AnalogChannel leftUltrasonic = new AnalogChannel(Ports.leftUltrasonic);
-//    AnalogChannel rightUltrasonic = new AnalogChannel(Ports.rightUltrasonic);
-//    DigitalOutput ultrasonicSignal = new DigitalOutput(Ports.ultrasonicSignal);
+    AnalogChannel leftUltrasonic = new AnalogChannel(Ports.leftUltrasonic);
+    AnalogChannel rightUltrasonic = new AnalogChannel(Ports.rightUltrasonic);
+    DigitalOutput ultrasonicSignal = new DigitalOutput(Ports.ultrasonicSignal);
     boolean shooting = false;
+    int ping = 0;
 
     public void robotInit() {
         addComponents();
@@ -90,6 +93,16 @@ public class RobotTemplate extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+        //ping ultrasonic sensors
+        ping++;
+        if (ping % 5 == 0) {
+            ultrasonicSignal.pulse(0.0001);
+        }
+        double leftD = convertToDistance(leftUltrasonic.getAverageVoltage());
+        double rightD = convertToDistance(rightUltrasonic.getAverageVoltage());
+
+        SmartDashboard.putNumber("leftD", leftD);
+        SmartDashboard.putNumber("right", rightD);
         SmartDashboard.putBoolean("feeder state", toggleFeeder.getState());
         SmartDashboard.putBoolean("ball limit", ballLimit.get());
         SmartDashboard.putBoolean("pass", pass.get());
@@ -164,5 +177,9 @@ public class RobotTemplate extends IterativeRobot {
         LiveWindow.addSensor("trigger", "ball limit", ballLimit);
         LiveWindow.addSensor("gyro", "gyro", gyro);
         LiveWindow.addActuator("feeder", "feeder", feederMotor);
+    }
+
+    public double convertToDistance(double rawVoltage) {
+        return (rawVoltage + 0.0056) / 0.1141;
     }
 }
