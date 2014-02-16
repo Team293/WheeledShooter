@@ -37,42 +37,42 @@ public class RobotTemplate extends IterativeRobot {
     Talon leftMotor = new Talon(Ports.leftDrive),
             rightMotor = new Talon(Ports.rightDrive);
     RobotDrive drive = new RobotDrive(leftMotor, rightMotor);
-    
+
     Talon shooterLow = new Talon(Ports.shooterLow),
             shooterMiddle = new Talon(Ports.shooterMiddle),
             shooterHigh = new Talon(Ports.shooterHigh);
-    
+
     Relay trigger = new Relay(Ports.trigger),
             feederMotor = new Relay(Ports.feeder),
             feederMotor2 = new Relay(Ports.feeder2);
-    
+
     Joystick leftJoystick = new Joystick(Ports.leftJoystick),
             rightJoystick = new Joystick(Ports.rightJoystick),
             gamepad = new Joystick(Ports.gamepad);
-    
+
     SpikeEncoder enc1 = new SpikeEncoder(Ports.shooterLowEncA, Ports.shooterLowEncB),
             enc2 = new SpikeEncoder(Ports.shooterMiddleEncA, Ports.shooterMiddleEncB),
             enc3 = new SpikeEncoder(Ports.shooterHighEncA, Ports.shooterHighEncB);
-    
+
     SpikeButton pass = new SpikeButton(gamepad, Ports.pass),
             toggleFeeder = new SpikeButton(gamepad, Ports.toggleFeeder),
             fire = new SpikeButton(rightJoystick, Ports.fire),
-            autoAlign = new SpikeButton(leftJoystick, 1),
+            autoDistance = new SpikeButton(leftJoystick, 1),
             toggleDriveDirection = new SpikeButton(rightJoystick, Ports.toggleDriveDirection);
-    
+
     Servo cageRelease = new Servo(Ports.cageRelease);
-    
+
     DigitalInput ballLimit = new DigitalInput(Ports.ballLimit);
-    
+
     Gyro gyro = new Gyro(Ports.gyro);
-    
+
     AnalogChannel leftUltrasonic = new AnalogChannel(Ports.leftUltrasonic);
     AnalogChannel rightUltrasonic = new AnalogChannel(Ports.rightUltrasonic);
     DigitalOutput ultrasonicSignal = new DigitalOutput(Ports.ultrasonicSignal);
     boolean shooting = false;
     int ping = 0;
     double leftDistance = 0, rightDistance;
-    
+
     public void robotInit() {
         addComponents();
         enc1.start();
@@ -80,7 +80,7 @@ public class RobotTemplate extends IterativeRobot {
         enc3.start();
         cageRelease.set(0);
     }
-    
+
     public void teleopInit() {
         SmartDashboard.putNumber("1", -0.4);
         SmartDashboard.putNumber("2", 0.4);
@@ -92,7 +92,7 @@ public class RobotTemplate extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-        
+
     }
 
     /**
@@ -106,7 +106,7 @@ public class RobotTemplate extends IterativeRobot {
         }
         leftDistance = convertToDistance(leftUltrasonic.getAverageVoltage());
         rightDistance = convertToDistance(rightUltrasonic.getAverageVoltage());
-        
+
         SmartDashboard.putNumber("leftD", leftDistance);
         SmartDashboard.putNumber("right", rightDistance);
         SmartDashboard.putBoolean("feeder state", toggleFeeder.getState());
@@ -119,21 +119,15 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("enc1 RPM", enc1.getRPM());
         SmartDashboard.putNumber("enc2 RPM", enc2.getRPM());
         SmartDashboard.putNumber("enc3 RPM", enc3.getRPM());
-        
-        if (toggleDriveDirection.getState()) {
-            drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
-        } else {
-            drive.tankDrive(-rightJoystick.getY(), -leftJoystick.getY());
-        }
-        
+
         shooterLow.set(speed1);
         shooterHigh.set(speed3);
         shooterMiddle.set(speed2);
-        
+
         if (fire.getClick()) {
             shooting = true;
         }
-        
+
         Relay.Value feederValue;
         if (!shooting) {
             if (pass.get()) {
@@ -144,7 +138,7 @@ public class RobotTemplate extends IterativeRobot {
                 if (ballLimit.get()) {
                     feederValue = Relay.Value.kForward;
                     SmartDashboard.putString("feeder value", "feeding!");
-                } else {                    
+                } else {
                     feederValue = Relay.Value.kOff;
                     SmartDashboard.putString("feeder value", "stopped!");
                 }
@@ -164,6 +158,16 @@ public class RobotTemplate extends IterativeRobot {
         feederMotor.set(feederValue);
         feederMotor2.set(feederValue);
         isAligned();
+        if (isAtDistance() && autoDistance.get()) {
+            moveToDistance();
+        } else {
+            if (toggleDriveDirection.getState()) {
+                drive.tankDrive(leftJoystick.getY(), rightJoystick.getY());
+            } else {
+                drive.tankDrive(-rightJoystick.getY(), -leftJoystick.getY());
+            }
+
+        }
     }
 
     /**
@@ -172,7 +176,7 @@ public class RobotTemplate extends IterativeRobot {
     public void testPeriodic() {
         LiveWindow.run();
     }
-    
+
     public void addComponents() {
         LiveWindow.addActuator("shooter rack", "shooter 1", shooterLow);
         LiveWindow.addActuator("shooter rack", "shooter 2", shooterMiddle);
@@ -185,17 +189,39 @@ public class RobotTemplate extends IterativeRobot {
         LiveWindow.addSensor("gyro", "gyro", gyro);
         LiveWindow.addActuator("feeder", "feeder", feederMotor);
     }
-    
+
     public double convertToDistance(double rawVoltage) {
         return (rawVoltage + 0.0056) / 0.12;
     }
-    
-    public void isAligned() {
+
+    public boolean isAligned() {
+        double difference = leftDistance - rightDistance;
+        SmartDashboard.putNumber("aligned", difference);
+        SmartDashboard.putBoolean("aligned", difference < 0.4);
+        if (difference < 0.4) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isAtDistance() {
         double difference = leftDistance - rightDistance;
         double average = (leftDistance + rightDistance) / 2.0;
-        SmartDashboard.putNumber("aligned", difference);
-        SmartDashboard.putNumber("distanced", Math.abs(average - 12));
-        SmartDashboard.putBoolean("aligned", difference < 0.4);
         SmartDashboard.putBoolean("distanced", Math.abs(average - 12) < 1);
+        if (difference < 5 && Math.abs(average - 12) < 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public void moveToDistance() {
+        double difference = leftDistance - rightDistance;
+        double average = (leftDistance + rightDistance) / 2.0;
+        SmartDashboard.putNumber("average dstiance", average);
+        if (difference < 5) {
+            drive.tankDrive(0.4, 0.4);
+        } else {
+            drive.tankDrive(0, 0);
+        }
     }
 }
