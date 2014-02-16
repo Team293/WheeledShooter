@@ -21,6 +21,7 @@ public class Ports {
             //___gamepad
             toggleFeeder = 1,
             pass = 2,
+            stopShooter=3,
             //axes
             gamepadLeftXAxis = 1,
             gamepadLeftYAxis = 2,
@@ -32,10 +33,10 @@ public class Ports {
             feeder = 1,
             feeder2 = 2,
             trigger = 3,
-            cageRelease = 3,
             shooterLow = 3,
             shooterMiddle = 4,
             shooterHigh = 5,
+            cageRelease = 6,
             cameraServo = 10,
             //encoders
             shooterLowEncA = 2,
@@ -50,7 +51,7 @@ public class Ports {
             rightUltrasonic = 2,
             leftUltrasonic = 3,
             //Digital Outputs
-            ultrasonicSignal = 9,
+            ultrasonicSignal = 8,
             led1 = 10,
             led2 = 11,
             led3 = 12,
