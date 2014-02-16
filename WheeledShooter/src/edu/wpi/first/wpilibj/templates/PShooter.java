@@ -33,7 +33,7 @@ public class PShooter{
      */
     PShooter(int motorPort, int encoderA, int encoderB, double kP, double setpoint, boolean reversed) {
         motor = new Talon(motorPort);
-        encoder = new SpikeEncoder(encoderA, encoderB);
+        encoder = new SpikeEncoder(encoderA, encoderB,SpikeEncoder.BLACK);
         this.kP = 0.0015;
         this.setpoint = setpoint;
         this.id = ID;

@@ -50,9 +50,9 @@ public class RobotTemplate extends IterativeRobot {
             rightJoystick = new Joystick(Ports.rightJoystick),
             gamepad = new Joystick(Ports.gamepad);
 
-    SpikeEncoder enc1 = new SpikeEncoder(Ports.shooterLowEncA, Ports.shooterLowEncB),
-            enc2 = new SpikeEncoder(Ports.shooterMiddleEncA, Ports.shooterMiddleEncB),
-            enc3 = new SpikeEncoder(Ports.shooterHighEncA, Ports.shooterHighEncB);
+    SpikeEncoder enc1 = new SpikeEncoder(Ports.shooterLowEncA, Ports.shooterLowEncB, SpikeEncoder.BLACK),
+            enc2 = new SpikeEncoder(Ports.shooterMiddleEncA, Ports.shooterMiddleEncB, SpikeEncoder.BLACK),
+            enc3 = new SpikeEncoder(Ports.shooterHighEncA, Ports.shooterHighEncB, SpikeEncoder.BLACK);
 
     SpikeButton pass = new SpikeButton(gamepad, Ports.pass),
             toggleFeeder = new SpikeButton(gamepad, Ports.toggleFeeder),
