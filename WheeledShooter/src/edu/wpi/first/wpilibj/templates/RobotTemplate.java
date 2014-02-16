@@ -14,10 +14,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
-<<<<<<< HEAD
-=======
 import edu.wpi.first.wpilibj.Servo;
->>>>>>> ae011e905ea04f7b775f25b097d0b4c958bbce06
 import edu.wpi.first.wpilibj.SpikeEncoder;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.buttons.SpikeButton;
@@ -53,9 +50,9 @@ public class RobotTemplate extends IterativeRobot {
             rightJoystick = new Joystick(Ports.rightJoystick),
             gamepad = new Joystick(Ports.gamepad);
 
-    SpikeEncoder enc1 = new SpikeEncoder(Ports.shooterLowEncA, Ports.shooterLowEncB),
-            enc2 = new SpikeEncoder(Ports.shooterMiddleEncA, Ports.shooterMiddleEncB),
-            enc3 = new SpikeEncoder(Ports.shooterHighEncA, Ports.shooterHighEncB);
+    SpikeEncoder enc1 = new SpikeEncoder(Ports.shooterLowEncA, Ports.shooterLowEncB, SpikeEncoder.BLACK),
+            enc2 = new SpikeEncoder(Ports.shooterMiddleEncA, Ports.shooterMiddleEncB, SpikeEncoder.BLACK),
+            enc3 = new SpikeEncoder(Ports.shooterHighEncA, Ports.shooterHighEncB, SpikeEncoder.BLACK);
 
     SpikeButton pass = new SpikeButton(gamepad, Ports.pass),
             toggleFeeder = new SpikeButton(gamepad, Ports.toggleFeeder),
